@@ -1,0 +1,14 @@
+name: RandomBlockBuild
+version: 1.0.0
+main: my.pkg.MyPlugin
+api-version: '1.21'
+
+commands:
+  randombuild:
+    description: 랜덤 블록 건축 시작
+    usage: /randombuild <player>
+    permission: myplugin.randombuild
+
+permissions:
+  myplugin.randombuild:
+    default: op
