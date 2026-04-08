@@ -127,15 +127,50 @@ public class RandomBuildManager {
         player.setGameMode(session.oldGameMode);
         player.updateInventory();
 
-        // 액션바 전체 지우기
         clearActionBarForAll();
 
         if (timeUp) {
             player.sendTitle("§c시간 종료!", "§7건축이 끝났습니다", 10, 50, 10);
             Bukkit.broadcastMessage("§c[랜덤건축] §f" + player.getName() + "님의 건축 시간이 종료되었습니다.");
+            startGuessTimer(player);
+
         } else {
             Bukkit.broadcastMessage("§e[랜덤건축] §f" + player.getName() + "님의 게임이 종료되었습니다.");
         }
+    }
+
+    private void startGuessTimer(Player builder) {
+        Bukkit.broadcastMessage("§e[랜덤건축] §f30초 동안 무엇을 만들었는지 맞춰보세요!");
+
+        final int[] time = {30};
+
+        BukkitTask task = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
+
+            if (time[0] <= 0) {
+                clearActionBarForAll();
+                Bukkit.broadcastMessage("§a[랜덤건축] §f맞추기 시간이 종료되었습니다!");
+                return;
+            }
+
+            String color;
+            if (time[0] <= 10) {
+                color = "§c";
+            } else if (time[0] <= 20) {
+                color = "§e";
+            } else {
+                color = "§a";
+            }
+
+            String msg = "§e[맞추기] §f" + builder.getName() + "의 건축 | "
+                    + color + time[0] + "초 남음";
+
+            for (Player p : Bukkit.getOnlinePlayers()) {
+                p.sendActionBar(Component.text(msg));
+            }
+
+            time[0]--;
+
+        }, 0L, 20L);
     }
 
     private void sendActionBarToAll(Player builder, int seconds) {
